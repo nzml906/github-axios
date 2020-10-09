@@ -1,0 +1,62 @@
+<template>
+  <div class="grid__row">
+
+    <user-profile
+      :isBookmarked="isBookmarkUser"
+      :userData="userData"
+      v-if="showingUserData">
+    </user-profile>
+
+    <repository-list
+      :repositories="userRepositories"
+      v-if="showingRepoData">
+    </repository-list>
+
+  </div>
+</template>
+
+<script>
+import UserProfile from 'components/UserProfile.vue'
+import RepositoryList from 'components/RepositoryList.vue'
+
+export default {
+  name: 'ProfilePage',
+  components: {UserProfile, RepositoryList},
+  computed: {
+    showingUserData: function () {
+      let self = this
+      if (self.userData && self.userData.avatar_url) {
+        return true
+      } else return false
+    },
+    showingRepoData: function () {
+      let self = this
+      if (self.userRepositories && self.userRepositories.length > 0) {
+        return true
+      } else return false
+    },
+    userShowing: function () {
+      return this.$route.params.user
+    },
+    isBookmarkUser () {
+      return this.$store.getters.isBookmarkUser
+    },
+    userData () {
+      return this.$store.getters.userData
+    },
+    userRepositories () {
+      return this.$store.getters.userRepositories
+    }
+  },
+  activated () {
+    let self = this
+    self.$store.dispatch('getUserData', self.userShowing)
+    self.$store.dispatch('getUserRepositories', self.userShowing)
+  }
+}
+
+</script>
+
+<style lang="scss" scoped>
+
+</style>
